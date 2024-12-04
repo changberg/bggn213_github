@@ -1,0 +1,82 @@
+---
+---
+title: "Lab 6"
+author: "Janie Chang-Weinberg (PID: A69037446)"
+format: pdf
+editor: visual
+---
+---
+
+```{r}
+add <- function(x,y=1,z=0){
+  x + y
+}
+```
+
+```{r}
+add(1,1)
+
+```
+
+```{r}
+add(1,1,z=1)
+```
+
+Q1: Define a function "Generate_DNA()" that makes a random nucleotide sequence of any length
+
+# A second Function
+
+```{r}
+#generate_dna <- function()
+bases <- c("A","C","T","G")
+sequence <- sample(bases, replace=TRUE, size=5)
+```
+^^the above are code snippets that can be stitched together for function building
+
+
+```{r}
+generate_dna <- function(length) {
+  bases <- c("A","C","T","G")
+  sequence <- sample(bases, size=length, 
+                    replace=TRUE)
+  return(sequence)
+  
+}
+```
+
+```{r}
+generate_dna(10)
+```
+tadaa
+
+```{r}
+aas <- unique(bio3d::aa.table$aa1)[1:20]
+aaseq <- sample(aas, size=5, replace= TRUE)
+```
+
+
+Now make a similar function to the "generate_dna" function, but with amino acids.
+
+```{r}
+generate_pep <- function(length){
+  aas <- unique(bio3d::aa.table$aa1)[1:20]
+  aaseq <- sample(aas,size=length,replace=TRUE)
+  aaseq <- paste(aaseq, collapse="") #collapse command will remove spaces between returned vals
+  return(aaseq)
+}
+```
+
+Q2: Generate random protein sequences of length 6-13 AAs.
+
+```{r}
+generate_pep(6)
+```
+Generate random sequences of length 6-12 AAs
+```{r}
+answer <- sapply(6:12, generate_pep)
+answer
+```
+
+```{r}
+cat(paste(">id.", 6:12, "\n", answer, sep=""),sep="\n")
+```

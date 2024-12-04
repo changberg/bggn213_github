@@ -1,0 +1,17 @@
+{
+  "hash": "6e7955e67b6202cd808aaa259bee6235",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\n---\n\n\ntitle: \"Lab 6\"\nauthor: \"Janie Chang-Weinberg (PID: A69037446)\"\nformat: pdf\neditor: visual\n\n\n---\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nadd <- function(x,y=1,z=0){\n  x + y\n}\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nadd(1,1)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nadd(1,1,z=1)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 2\n```\n\n\n:::\n:::\n\n\n\nQ1: Define a function \"Generate_DNA()\" that makes a random nucleotide sequence of any length\n\n# A second Function\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#generate_dna <- function()\nbases <- c(\"A\",\"C\",\"T\",\"G\")\nsequence <- sample(bases, replace=TRUE, size=5)\n```\n:::\n\n\n^^the above are code snippets that can be stitched together for function building\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngenerate_dna <- function(length) {\n  bases <- c(\"A\",\"C\",\"T\",\"G\")\n  sequence <- sample(bases, size=length, \n                    replace=TRUE)\n  return(sequence)\n  \n}\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ngenerate_dna(10)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n [1] \"T\" \"T\" \"C\" \"T\" \"G\" \"A\" \"G\" \"G\" \"C\" \"C\"\n```\n\n\n:::\n:::\n\n\ntadaa\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\naas <- unique(bio3d::aa.table$aa1)[1:20]\naaseq <- sample(aas, size=5, replace= TRUE)\n```\n:::\n\n\n\n\nNow make a similar function to the \"generate_dna\" function, but with amino acids.\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngenerate_pep <- function(length){\n  aas <- unique(bio3d::aa.table$aa1)[1:20]\n  aaseq <- sample(aas,size=length,replace=TRUE)\n  aaseq <- paste(aaseq, collapse=\"\") #collapse command will remove spaces between returned vals\n  return(aaseq)\n}\n```\n:::\n\n\n\nQ2: Generate random protein sequences of length 6-13 AAs.\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngenerate_pep(6)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] \"LPYRKP\"\n```\n\n\n:::\n:::\n\n\nGenerate random sequences of length 6-12 AAs\n\n\n::: {.cell}\n\n```{.r .cell-code}\nanswer <- sapply(6:12, generate_pep)\nanswer\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] \"GDNMGP\"       \"IMPLHAG\"      \"MDSVHRMH\"     \"NNSFWHMFD\"    \"YMQWATGIEK\"  \n[6] \"EYYTTILFHRQ\"  \"HNTPSRDMHPPV\"\n```\n\n\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ncat(paste(\">id.\", 6:12, \"\\n\", answer, sep=\"\"),sep=\"\\n\")\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n>id.6\nGDNMGP\n>id.7\nIMPLHAG\n>id.8\nMDSVHRMH\n>id.9\nNNSFWHMFD\n>id.10\nYMQWATGIEK\n>id.11\nEYYTTILFHRQ\n>id.12\nHNTPSRDMHPPV\n```\n\n\n:::\n:::\n",
+    "supporting": [
+      "JCW_101824_bioinfo_class6_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}
