@@ -5,4 +5,6 @@ Class 4: [Intro to R](https://github.com/changberg/bggn213_github/blob/main/1011
 
 Class 5: [All about GGPlot](JCW_101624_bioinbfo_ggplotintro/JCW_101624__bioinfo_Class5.qmd)
 
-Class 6: [R Functions]
+Class 6: [R Functions](Lab6/JCW_101824_bioinfo_class6.qmd)
+
+Class 7: [Machine Learning 1]
