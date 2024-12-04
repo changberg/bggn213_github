@@ -7,4 +7,4 @@ Class 5: [All about GGPlot](JCW_101624_bioinbfo_ggplotintro/JCW_101624__bioinfo_
 
 Class 6: [R Functions](Lab6/JCW_101824_bioinfo_class6.qmd)
 
-Class 7: [Machine Learning 1]
+Class 7: [Machine Learning 1](JCW_102324_Bioinfo_Class7MachineLearning1/JCW_102324_Bioinfo_Class7MachineLearning1.qmd)
