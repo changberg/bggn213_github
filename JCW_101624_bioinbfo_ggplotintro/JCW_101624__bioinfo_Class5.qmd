@@ -1,0 +1,138 @@
+---
+title: "Class 5: Data Visualization with 'ggplot'"
+author: "Janie Chang-Weinberg (PID: A69037446)"
+format: pdf
+---
+
+There are many ways to visualize data in R. One is through the use of a built in function called **"base" R** - the "plot()" function is part of this.
+
+```{r}
+plot(cars)
+```
+
+A popular package in this area is called **ggplot2**
+
+Before any add-on package can be used (like ggplot2) it must be installed! Install using the `install.packages("ggplot2")` command.
+
+Load the package with `library(ggplot2)` call.
+
+```{r}
+library(ggplot2)
+
+ggplot(cars) +
+  aes(x=speed, y=dist) +
+  geom_point()
+```
+
+For "simple" plots like the one above, the base R `plot()` command is much less code.
+
+```{r}
+ggplot(cars) +
+  aes(x=speed, y=dist) +
+  geom_point()+
+  geom_smooth()
+```
+
+Every ggplot has at least 3 layers: - **data**: data.frame with the data you want to visualize - **aes**: short for "aesthetics"-- mapping of data columns to your plot - **geoms**: there are tons of ways to shape your data, some basics are `geom_plot()`, `geom_line()`, `geom_col()`.
+
+```{r}
+mtcars
+```
+
+Make me a ggplot of the `mtrcars` dataset using `mpg` vs `disp`
+
+```{r ggplot_example_mtcars_mpgvsdisp_sizeishp}
+library(ggplot2)
+
+ggplot(mtcars) +
+  aes(x=mpg, y=disp, size=hp) +
+  geom_point(col="cyan3") 
+```
+
+To make plots move around: `install.packages("ggrepel")`
+
+```{r}
+url <- "https://bioboot.github.io/bimm143_S20/class-material/up_down_expression.txt"
+genes <- read.delim(url)
+head(genes)
+```
+
+```{r}
+nrow(genes)
+colnames(genes)
+ncol(genes)
+```
+
+```{r}
+table(genes$State)
+127/5196
+```
+
+```{r}
+p <- ggplot(genes)+
+    aes(x=Condition1, y=Condition2, col=State)+
+    geom_point()
+p
+```
+
+```{r}
+p + scale_color_manual(values=c("blue", "grey","red"))
+```
+
+```{r}
+p + scale_color_manual(values=c("blue", "grey","red")) +
+    labs(title="Gene Expression Changes Upon Drug Treatment",
+       x="No Drug Ctrl", 
+       y="Drug")
+```
+
+```{r}
+library(gapminder)
+library(dplyr)
+
+gapminder_2007 <- gapminder %>% filter(year==2007)
+```
+
+```{r}
+p2 <- ggplot(gapminder_2007)+
+    aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)+
+    geom_point(alpha=0.5)
+p2
+```
+
+```{r}
+p3 <- ggplot(gapminder_2007)+
+    aes(x=gdpPercap, y=lifeExp, color=pop)+
+    geom_point(alpha=0.8)
+p3
+```
+
+```{r}
+p4 <- ggplot(gapminder_2007)+
+    aes(x=gdpPercap, y=lifeExp, size=pop)+
+    geom_point(alpha=0.5)
+p4
+```
+
+```{r}
+p5 <- ggplot(gapminder_2007)+
+    geom_point(aes(x=gdpPercap, y=lifeExp, size=pop), alpha=0.5)+
+    scale_size_area(max_size=10)
+p5
+```
+
+```{r}
+gapminder_top5 <- gapminder %>% 
+  filter(year==2007) %>% 
+  arrange(desc(pop)) %>% 
+  top_n(5, pop)
+
+gapminder_top5
+```
+
+```{r}
+q <- ggplot(gapminder_top5) +
+    geom_col(aes(x=country, y=pop))
+
+q
+```
