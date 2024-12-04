@@ -1,0 +1,57 @@
+---
+---
+title: "Class 6 Homework'"
+author: "Janie Chang-Weinberg (PID: A69037446)"
+format: pdf
+editor: visual
+---
+---
+
+10/18/24 Homework (Class 6)
+
+What hath been bestowed upon us:
+
+```{r}
+# Can you improve this analysis code?
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA") #elety means "element type"
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA") #CA means "alpha carbon"
+s3.chainA <- trim.pdb(s3, chain="A", elety="CA") 
+
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+
+plotb3(s1.b, sse=s1.chainA, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+```
+
+My attempt:
+
+```{r}
+pleppy <- function(pepseq){ #pepseq is whatever peptide name you want to look for
+  library(bio3d) #loads the bio3d library
+ 
+  s <- read.pdb(pepseq) #will search the db for whatever pepseq you want, assigned   to variable "s"
+  
+  s.chainA <- trim.pdb(s, chain="A", elety="CA") #this narrows your search to just   the "A" chain from the alpha carbon
+  
+  s.b <- s.chainA$atom$b #further narrows your search to the "B-factor" of the      protein
+  
+  plotb3(s.b, sse=s.chainA, typ="l", ylab="Bfactor")
+ 
+}
+
+```
+
+Now plot all 3 peptides
+
+```{r}
+test_peps <- c("4AKE", "1AKE", "1E4Y")
+sapply(test_peps, pleppy)
+```
