@@ -1,0 +1,244 @@
+---
+title: "Class10 Structural Bioinformatics Pt1 (11/01/24)"
+author: "Janie Chang-Weinberg (A69037446)"
+format: pdf
+---
+
+What is in the PDB database anyway?
+Summary data grabbed from:
+https://www.rcsb.org/stats/summary
+
+```{r}
+pdbstats <- read.csv("PDB_stats_summaryfile.csv", row.names = 1)
+pdbstats
+```
+
+```{r}
+x <- pdbstats$Total
+x
+```
+
+```{r}
+#as.numeric(x): Warning: NAs introduced by coercion[1]  NA  NA  NA  NA 213  22
+```
+```{r}
+gsub(',', '', x)
+```
+
+doesn't like the commas, ask google. can also use "claude" 
+use gsub to replace commas with nothings
+```{r}
+convertednocomma <- function(x){
+  #remove comma
+  x <- gsub(',', '', x)
+  #convert to numeric
+  x <- as.numeric(x)
+  return(x)
+}
+```
+
+```{r}
+convertednocomma(pdbstats$Total)
+```
+
+```{r}
+n.tot <- sum(convertednocomma(pdbstats$Total))
+n.tot
+```
+
+The `apply()` function is very useful as it can take any function and "Apply" it over either the ROWS or COLs of a data.frame.
+```{r}
+colSums(apply(pdbstats, 2, convertednocomma))/n.tot
+
+
+```
+
+```{r}
+#another way of importing data to avoid issues with commas in the numbas
+#library(readr)
+#read_csv("PDB_stats_summaryfile.csv")
+```
+
+Q1: What percentage of structures in the PDB are solved by X-Ray and Electron Microscopy?
+
+```{r}
+n.xray <- sum(convertednocomma(pdbstats$X.ray))
+n.em <- sum(convertednocomma(pdbstats$EM))
+
+xraypercent <- ((n.xray/n.tot)*100)
+empercent <- ((n.em/n.tot)*100)
+
+xraypercent
+empercent
+```
+>83.26% (xray%), 10.23% (EM%)
+
+Q2. What proportion of structures in the PDB are protein?
+
+```{r}
+n.totalprots <- 195866/n.tot
+
+n.totalprots
+```
+> 86.4%
+
+Q3: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
+
+> 4,640
+
+## Using Mol*
+
+![My first image from Mol-star :D](1HSG.png)
+
+Q4: Water molecules normally have 3 atoms. Why do we see just one atom per water molecule in this structure?
+
+>Cannot see Hydrogen at this resolution, the only atom being displayed here is oxygen. 
+
+Q5: There is a critical “conserved” water molecule in the binding site. Can you identify this water molecule? What residue number does this water molecule have
+
+> This water molecule's residue number is HOH 308
+
+Q6: Generate and save a figure clearly showing the two distinct chains of HIV-protease along with the ligand. You might also consider showing the catalytic residues ASP 25 in each chain and the critical water (we recommend “Ball & Stick” for these side-chains). Add this figure to your Quarto document.
+
+>![with Aspartate residues and H2O mol](1HSG_withwater.png)
+
+## Use the Bio3D package for structural Bioinformatics
+
+```{r}
+library(bio3d)
+
+pdb <- read.pdb("1hsg")
+pdb
+```
+
+```{r}
+attributes(pdb)
+```
+```{r}
+head(pdb$atom)
+```
+
+```{r}
+pdbseq(pdb)[25]
+```
+Q7. How many amino acids are there in this structure?
+```{r}
+length(pdbseq(pdb))
+```
+> There are 198 amino acids in this structure
+
+Q8. Name one of the two non-protein residues?
+
+> HOH (water)
+
+Q9. How many protein chains are in this structure?
+
+> 2
+
+```{r}
+adk <- read.pdb("6s36")
+adk
+```
+
+```{r}
+library(r3dmol)
+source("https://tinyurl.com/viewpdb")
+
+library(shiny)
+view.pdb(pdb)
+```
+
+
+
+```{r}
+modes <- nma(adk)
+plot(modes)
+
+mktrj(modes, pdb=adk, file='adk.pdb') #give it the pdb= thing to have proper seq
+```
+
+```{r}
+mktrj(modes, file="adk_m7.pdb")
+```
+
+
+Q10. Which of the packages above is found only on BioConductor and not CRAN?
+
+> biocmanager
+
+Q.11 Which of the above packages is not found on BioConductor or CRAN?
+
+> bio3d 
+
+Q.12 True or False? Functions from the devtools package can be used to install packages from GitHub and BitBucket?
+
+> True
+
+
+
+```{r}
+library(bio3d)
+aa <- get.seq("1ake_A")
+aa
+```
+
+Q13. How many amino acids are in this sequence, i.e. how long is this sequence?
+
+> There are 214 AAs
+
+##Blast or hmmer search 
+```{r}
+b <- blast.pdb(aa)
+```
+
+##Plot a summary of search results:
+```{r}
+hits <- plot(b)
+```
+
+##List some "Top Hits" and download their .pdb files:
+```{r}
+head(hits$pdb.id)
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+##Align and Superimpose structures:
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+```{r}
+ids <- basename.pdb(pdbs$id)
+#plot(pdbs, labels=ids)
+
+#commenting out, as R will not render this figure. It is added here as a screenshot.
+```
+
+![pdbs plot](plot.png)
+
+##Annotate PDB Structures
+```{r}
+anno <- pdb.annotate(ids)
+unique(anno$source)
+```
+
+```{r}
+anno
+```
+
+##Perform PCA
+```{r}
+pc.xray <- pca(pdbs)
+plot(pc.xray)
+```
+##Calculate RMSD and show structure-based clustering
+```{r}
+rd <- rmsd(pdbs)
+
+
+hc.rd <- hclust(dist(rd))
+grps.rd <- cutree(hc.rd, k=3)
+
+plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
+```
+

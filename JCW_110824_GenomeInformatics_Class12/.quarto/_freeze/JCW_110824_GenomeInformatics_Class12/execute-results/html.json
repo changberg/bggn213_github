@@ -1,0 +1,17 @@
+{
+  "hash": "7c553f6047c2a1fc88d675c27ad5295b",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"JCW_110824_GenomeInformatics_Class12\"\nauthor: \"Janie Chang-Weinberg (A69037446)\"\nformat: html\n---\n\n\n\nLooking through MXL .csv\n\n\n::: {.cell}\n\n```{.r .cell-code}\nmxl <- read.csv(\"373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv\")\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ntbl.mxl <- table(mxl$Genotype..forward.strand.)\ntbl.mxl\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n\nA|A A|G G|A G|G \n 22  21  12   9 \n```\n\n\n:::\n:::\n\n\n\n> There are 9 instances of G|G out of 64 genotypes. 14.06% are homozygous for the asthma-related SNP.\n\n## Homework (Questions 13 and 14)\n\nQ13: Read this file into R and determine the sample size for each genotype and their\ncorresponding median expression levels for each of these genotypes.\n\nRead txt file into .csv\n\n\n::: {.cell}\n\n```{.r .cell-code}\ngenos <- read.table(\"https://bioboot.github.io/bggn213_F24/class-material/rs8067378_ENSG00000172057.6.txt\")\n\nhead(genos)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n   sample geno      exp\n1 HG00367  A/G 28.96038\n2 NA20768  A/G 20.24449\n3 HG00361  A/A 31.32628\n4 HG00135  A/A 34.11169\n5 NA18870  G/G 18.25141\n6 NA11993  A/A 32.89721\n```\n\n\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nsummary(genos)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n    sample              geno                exp        \n Length:462         Length:462         Min.   : 6.675  \n Class :character   Class :character   1st Qu.:20.004  \n Mode  :character   Mode  :character   Median :25.116  \n                                       Mean   :25.640  \n                                       3rd Qu.:30.779  \n                                       Max.   :51.518  \n```\n\n\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ngenosplot <- boxplot(genos$exp ~ genos$geno)\n```\n\n::: {.cell-output-display}\n![](JCW_110824_GenomeInformatics_Class12_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ngenosplot\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n$stats\n         [,1]     [,2]     [,3]\n[1,] 15.42908  7.07505  6.67482\n[2,] 26.95022 20.62572 16.90256\n[3,] 31.24847 25.06486 20.07363\n[4,] 35.95503 30.55183 24.45672\n[5,] 49.39612 42.75662 33.95602\n\n$n\n[1] 108 233 121\n\n$conf\n         [,1]     [,2]     [,3]\n[1,] 29.87942 24.03742 18.98858\n[2,] 32.61753 26.09230 21.15868\n\n$out\n[1] 51.51787 50.16704 51.30170 11.39643 48.03410\n\n$group\n[1] 1 1 1 1 2\n\n$names\n[1] \"A/A\" \"A/G\" \"G/G\"\n```\n\n\n:::\n:::\n\n\n\n> Sample sizes: \n  A/A: 108\n  A/G: 233\n  G/G: 121\n  \n> Median expression levels:\n  A/A: 31.24847\n  A/G: 25.06486\n  G/G: 20.07363\n\nQ14: Generate a boxplot with a box per genotype, what could you infer from the relative\nexpression value between A/A and G/G displayed in this plot? Does the SNP effect the\nexpression of ORMDL3?\n\n> (see above for boxplot, I should have read ahead, oops)\n  The overall expression levels of A/A is greater than G/G, indicating that the SNP negatively impacts expression of G/G vs A/A",
+    "supporting": [
+      "JCW_110824_GenomeInformatics_Class12_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

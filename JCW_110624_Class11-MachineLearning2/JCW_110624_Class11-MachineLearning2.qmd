@@ -1,0 +1,76 @@
+---
+title: "JCW_110624_Class11-MachineLearning2"
+author: "Janie Chang-Weinberg (A69037446)"
+format: pdf
+---
+
+Today, before delving into structure prediction with AlphaFold, we will finish off our previous lab 10 "comparative structure analysis" section.
+
+```{r}
+library(bio3d)
+
+id <- "1ake_A"
+
+aa <- get.seq(id)
+aa
+```
+
+```{r}
+b <- blast.pdb(aa)
+```
+
+```{r}
+attributes(b)
+```
+
+```{r}
+head(b$hit.tbl)
+```
+
+```{r}
+hits <- plot(b)
+```
+
+```{r}
+attributes(hits)
+```
+
+Top hits that we like from our blast results:
+```{r}
+hits$pdb.id
+```
+
+```{r}
+#Download related PDB files
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+I have now found and downloaded all ADK structures in the PDB database but viewing them is difficult as they need to be aligned and superposed. 
+
+I am going to install the BiocManager from CRAN, then I can use `BiocManager::instal()` to install any bioconductor package. 
+
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+```{r}
+pdbs
+```
+
+##Principal Component Analysis
+```{r}
+pc <- pca(pdbs)
+plot(pc)
+```
+fig 4 here is the scree plot! "Eigenvalue" are how you order the PCs. Eigenvalue 1 is PC1, Eigenvalue 2 is PC2, etc.  
+
+```{r}
+plot(pc, pc.axes=c(1:2))
+```
+
+To examine in more detail what PC1 (or any PC) is capturing here, we can plot the loadings or make an animated file of moving along PC1
+
+```{r}
+mktrj(pc, pc=1, file="pc1.pdb")
+```
+

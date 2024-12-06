@@ -1,0 +1,265 @@
+---
+title: "Class 13 Genomics Lab"
+author: "Janie Chang-Weinberg (A69037446)"
+format: pdf
+---
+
+Today we will work with a dataset "from a published RNA-seq experiment where airway smooth muscle cells were treated with dexamethasone, a synthetic glucocorticoid steroid with anti-inflammatory effects (Himes et al. 2014)." (from lab worksheet).
+
+```{r}
+counts <- read.csv("airway_scaledcounts.csv", row.names=1)
+metadata <- read.csv("airway_metadata.csv")
+```
+
+lets have a look!
+
+```{r}
+head(counts)
+```
+
+Not particularly helpful, will have to look at metadata
+```{r}
+head(metadata)
+```
+
+Q1. How many genes are in this dataset? 
+```{r}
+nrow(counts)
+```
+> There are 38,694 genes in this dataset
+
+
+Q2. How many ‘control’ cell lines do we have? 
+```{r}
+sum(metadata$dex == "control")
+```
+```{r}
+table(metadata$dex)
+```
+
+> There are 4 control cell lines.
+
+The goal here is to compare "control" vs "treated" cells.
+
+1.) Let's split the `counts` into `control.counts` and `treated.counts`
+
+```{r}
+metadata$id == colnames(counts)
+```
+
+```{r}
+control.inds <- metadata$dex == "control"
+control.inds
+```
+
+Syntax with df[ROWs, COLs]
+```{r}
+#This is to pull out the control columns
+control.counts <- counts[,control.inds]
+head(control.counts)
+```
+
+```{r}
+treated.inds <- metadata$dex == "treated"
+treated.counts <- counts[,treated.inds]
+head(treated.counts)
+```
+
+2. Let's calculate the mean counts per gene for "control" and "treated" - then we can compare these. Let's call it `control.mean` and `treated.mean`.
+
+I can use the `apply()` function to apply `mean()` over the rows or columns of any data.frame.
+
+```{r}
+control.mean <- apply(control.counts, 1, mean)
+treated.mean <- apply(treated.counts, 1, mean)
+```
+
+Put these two together for ease of book-keeping 
+
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+plot(meancounts)
+```
+These data are heavily skewed. Let's transform it using logs. 
+
+```{r}
+plot(meancounts, log="xy")
+```
+
+
+We most often use `log2` transforms here because it makes the math easier
+```{r}
+log2(10/10)
+```
+0= no change
+
+```{r}
+log2(20/10)
+```
+1 = increase
+
+```{r}
+log2(10/20)
+```
+-1 = decrease
+
+```{r}
+log2(40/10)
+```
+*log2 change of +2 is 4x increase (2 x 2)
+
+Let's calculate the Log2 fold-change of the drug and add it to our table, `meancounts`
+
+```{r}
+meancounts$log2fc <- log2(meancounts$treated.mean/
+                          meancounts$control.mean)
+head(meancounts)
+```
+
+Filter out all genes with zero counts in either control or treated:
+
+```{r}
+to.rm <- rowSums(meancounts[,1:2] == 0) > 0
+mycounts <- meancounts[!to.rm,]
+```
+
+```{r}
+nrow(mycounts)
+head(mycounts)
+```
+How many "down" regulated genes do we have at the common log2 fold change values of -2?
+```{r}
+sum(mycounts$log2fc < -2)
+```
+> There are 367 "down" regulated genes with a log2FC of less than -2.
+
+How many "up" at log2FC > +2?
+```{r}
+sum(mycounts$log2fc > +2)
+```
+> There are 250 "up" regulated genes with a log2FC of greater than +2.
+
+Do we trust these results? Is there anything missing?
+> There are no statistics! Give the people a p-value.
+
+## DESeq analysis
+```{r}
+#| message: false
+library(DESeq2)
+```
+
+DESeq, like many BioConductor packages, wants our input data in a very specific format. 
+
+```{r}
+#have to give the countData and the colData.The ~ indicates the design info is in the dex column of the data
+dds <- DESeqDataSetFromMatrix(countData = counts,
+                       colData = metadata,
+                       design = ~dex)
+```
+
+The main function of DESeq2 is called `DESeq()` and this will do much of the statistical analysis for us.
+
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+```{r}
+head(res)
+```
+
+A common overview figure plots the logFC s P-value
+
+```{r}
+plot(res$log2FoldChange, -log(res$padj))
+```
+(the points that are at the top have a smaller p-value-- you transformed it w/ log, and then inverted it so the plot is oriented "correctly")
+
+```{r}
+plot(res$log2FoldChange, -log(res$padj))
+abline(v=c(-2,2), col="grey")
+abline(h=-log(0.005), col="grey")
+```
+
+```{r}
+mycols <- rep("grey", nrow(res))
+head(mycols)
+
+mycols[res$log2FoldChange > 2] <- "red"
+mycols[res$log2FoldChange < -2] <- "red"
+mycols[res$padj > 0.005] <- "gray"
+
+plot(res$log2FoldChange, -log(res$padj), col=mycols)
+abline(v=c(-2,2), col="gray")
+abline(h=-log(0.005), col="gray")
+```
+
+```{r}
+write.csv(res, file="myresults.csv")
+```
+
+Let's annotate things!
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+```
+
+```{r}
+columns(org.Hs.eg.db)
+```
+
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), 
+                     keytype="ENSEMBL",        
+                     column="SYMBOL",        
+                     multiVals="first")
+
+head(res)
+```
+
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+
+# Examine the first 2 pathways in this kegg set for humans
+head(kegg.sets.hs, 2)
+```
+
+I must speak with KEGG! Change column to ENTREZID to be intelligible to KEGG.
+```{r}
+res$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), 
+                     keytype="ENSEMBL",        
+                     column="ENTREZID",        
+                     multiVals="first")
+
+head(res)
+```
+
+I can now use the **gage** function to check for overlap with known KEGG pathways.
+
+```{r}
+foldchanges <- res$log2FoldChange
+names(foldchanges) <- res$entrez
+head(foldchanges)
+```
+
+Lets get some results
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+attributes(keggres)
+head(keggres$less, 3)
+```
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa05310")
+```
+
+![Genes up/down regulated in Asthma pathways](hsa05310.pathview.png)
+
+
