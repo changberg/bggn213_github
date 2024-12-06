@@ -1,7 +1,7 @@
 ---
 title: "Class 5: Data Visualization with 'ggplot'"
 author: "Janie Chang-Weinberg (PID: A69037446)"
-format: pdf
+format: gfm
 ---
 
 There are many ways to visualize data in R. One is through the use of a built in function called **"base" R** - the "plot()" function is part of this.
