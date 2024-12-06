@@ -1,7 +1,7 @@
 ---
 title: "JCW_102324_Bioinfo_Class7MachineLearning1"
 author: "Janie Chang-Weinberg (A69037446)"
-format: pdf
+format: gfm
 ---
 
 Before we get into clustering methods, let's make some sample data to cluster where we know what the answer should be.
@@ -79,12 +79,14 @@ abline(h=9, col="red")
 ```
 
 To get the main clustering result (ie, the membership vector), you can "cut" the cluster dendrogram at a given height. To perform this, use `cutree()`
+
 ```{r}
 grps <- cutree(hc, h=9)
 grps
 ```
 
 ## Principal Component Analysis
+
 "Principal component analysis (PCA) is a well established "multivariate statistical technique" used to reduce the dimensionality of a complex data set to a more manageable number (typically 2D or 3D). This method is particularly useful for highlighting strong paterns and relationships in large datasets (i.e. revealing major similarities and diferences) that are otherwise hard to visualize. As we will see again and again in this course PCA is often used to make all sorts of bioinformatics data easy to explore and visualize." -ripped from webpage
 
 ```{r}
@@ -103,7 +105,7 @@ x <- x[,-1]
 head(x)
 ```
 
->Plot 1 (rainbow bar plot)
+> Plot 1 (rainbow bar plot)
 
 ```{r}
 barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
@@ -117,13 +119,13 @@ pairs(x, col=rainbow(10), pch=16)
 
 ## Principal Component Analysis can help organize data
 
-The main function to do PCA in base R is `prcomp()`
-The way the data are organized currently will not work, you must first transpose the data
+The main function to do PCA in base R is `prcomp()` The way the data are organized currently will not work, you must first transpose the data
 
 ```{r}
 pca <- prcomp(t(x))
 summary(pca)
 ```
+
 Check what is inside `pca` that has been calculated
 
 ```{r}
@@ -133,6 +135,7 @@ attributes(pca)
 ```{r}
 pca$x
 ```
+
 To make our main results figure called a "PC plot" (or score/ordination/PC1vsPC2 plot)
 
 ```{r}
@@ -141,7 +144,6 @@ plot(pca$x[,1], pca$x[,2],
      pch=16,
      xlab="PC1 (67.4%)", ylab="PC2 (29%)")
 ```
-
 
 ```{r}
 ```
@@ -154,4 +156,3 @@ can give us insight as to how the original variables (in this case the the foods
 pca$rotation
 plot(pca$rotation)
 ```
-
