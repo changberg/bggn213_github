@@ -7,4 +7,4 @@ Class 5: [All about GGPlot](https://github.com/changberg/bggn213_github/blob/mai
 
 Class 6: [R Functions](Lab6/JCW_101824_bioinfo_class6.qmd)
 
-Class 7: [Machine Learning 1](JCW_102324_Bioinfo_Class7MachineLearning1/JCW_102324_Bioinfo_Class7MachineLearning1.qmd)
+Class 7: [Machine Learning 1](https://github.com/changberg/bggn213_github/blob/main/JCW_102324_Bioinfo_Class7MachineLearning1/JCW_102324_Bioinfo_Class7MachineLearning1.html)
