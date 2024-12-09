@@ -1,8 +1,5 @@
----
-title: "Unix Basics Class 16"
-author: "Janie Chang-Weinberg"
-format: gfm
----
+# Unix Basics Class 16
+Janie Chang-Weinberg
 
 To print working directory: use `pwd`
 
@@ -22,10 +19,12 @@ Spaces act as delimiters in Unix
 
 `less` is a command to see text files. press `q` to exit
 
-to download stuff from web, use `curl` command. `0-` means download. use this like `curl -0 [url]`
+to download stuff from web, use `curl` command. `0-` means download. use
+this like `curl -0 [url]`
 
 to unzip: `gunzip [file]` to untar: `tar -xvf [file]`
 
-files that are highlighted in green in "bin" folders are executables!
+files that are highlighted in green in “bin” folders are executables!
 
-`$PATH` install software anywhere! as long as you can set up path you can use the software.
+`$PATH` install software anywhere! as long as you can set up path you
+can use the software.
