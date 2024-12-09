@@ -12,3 +12,21 @@ Class 7: [Machine Learning 1](https://github.com/changberg/bggn213_github/blob/m
 Class 8: [Breast Cancer Mini Project]()
 
 Class 9: [Halloween Mini Project](https://github.com/changberg/bggn213_github/blob/main/Halloween_Mini_Project_103024/Halloween_Mini_Project_103024.md)
+
+Class 10: [Structural Bioinformatics Pt. 1]
+
+Class 11: [Structural Bioinformatics Pt. 2]
+
+Class 12: [Genome Informatics]
+
+Class 13: [Transcriptomics]
+
+Class 14: [RNAseq Mini Project]
+
+Class 15: [Pertussis Mini Project]
+
+Class 16/17: [Essential Unix for Bioinformatics & Analyzing Data in the Cloud]
+
+Class 19: [Intro to Github]
+
+
