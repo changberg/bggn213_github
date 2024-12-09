@@ -1,13 +1,12 @@
 ---
 title: "Investigating Pertussis Resurgence, Class 15"
 author: "Janie Chang-Weinberg (A69037446)"
-format: pdf
+format: gfm
 ---
 
 Pertussis, aka "whooping cough" is a highly contagious lung infection caused by the *B. Pertussis* bacteria.
 
 The CDC tracks Pertussis case numbers and they can be accessed [here](https://www.cdc.gov/pertussis/php/surveillance/pertussis-cases-by-year.html?CDC_AAref_Val=https://www.cdc.gov/pertussis/surv-reporting/cases-by-year.html)
-
 
 We need to "scrape" this data so we do stuff with it in R. Let's try the **datapasta** package to do this.
 
@@ -65,11 +64,13 @@ baseplot
 ```
 
 Let's add the date of the wP vaccination introduction.
+
 ```{r}
 baseplot +
   theme_bw() +
   geom_vline(xintercept = 1946, color = "blue")
 ```
+
 Let's add the date of the switch to the new aP vaccine.
 
 ```{r}
@@ -90,6 +91,7 @@ baseplot +
 ```
 
 There was a pertussis outbreak in Disneyland or something
+
 ```{r}
 baseplot +
   theme_bw() +
@@ -122,6 +124,7 @@ head(subject)
 ```{r}
 nrow(subject)
 ```
+
 > there are 172 subjects here.
 
 ### How many male/female do we have?
@@ -129,6 +132,7 @@ nrow(subject)
 ```{r}
 table(subject$biological_sex)
 ```
+
 > There are 112 females and 60 males
 
 ### How many wP and aP do we have?
@@ -136,6 +140,7 @@ table(subject$biological_sex)
 ```{r}
 table(subject$infancy_vac)
 ```
+
 > There are 85 wP and 87 aP.
 
 ### Breakdown of biological sex and race?
@@ -150,10 +155,9 @@ table(subject$race, subject$biological_sex)
 table(subject$dataset)
 ```
 
-
 > NO!
 
-These data are still useful, however. 
+These data are still useful, however.
 
 ```{r}
 specimen <- read_json("http://cmi-pb.org/api/v5/specimen", 
@@ -163,19 +167,15 @@ ab_titer <- read_json("http://cmi-pb.org/api/v5/plasma_ab_titer",
                       simplifyVector = TRUE)
 ```
 
-
 ```{r}
 head(specimen)
 ```
-
 
 ```{r}
 head(ab_titer)
 ```
 
-
-We want to join `subject` and `specimen` together!
-Using dplyer, there are two modes of joining-- innerjoining or full joining. Inerjoining only merges data frame values for which there are no values missing from either dataset.
+We want to join `subject` and `specimen` together! Using dplyer, there are two modes of joining-- innerjoining or full joining. Inerjoining only merges data frame values for which there are no values missing from either dataset.
 
 For this, we only want those who both were vaccinated and also had their titers recorded, so we will use innerjoining.
 
@@ -250,6 +250,7 @@ ggplot(igg)+
   geom_boxplot() +
   facet_wrap(~visit)
 ```
+
 ```{r}
 iggpt <- filter(igg, antigen=="PT")
 head(iggpt)
@@ -259,7 +260,6 @@ head(iggpt)
 iggpt21 <- filter(iggpt, dataset=="2021_dataset")
 head(iggpt21)
 ```
-
 
 ```{r}
 ggplot(iggpt21) +

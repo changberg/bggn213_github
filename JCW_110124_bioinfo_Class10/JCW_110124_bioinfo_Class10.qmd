@@ -1,12 +1,10 @@
 ---
 title: "Class10 Structural Bioinformatics Pt1 (11/01/24)"
 author: "Janie Chang-Weinberg (A69037446)"
-format: pdf
+format: gfm
 ---
 
-What is in the PDB database anyway?
-Summary data grabbed from:
-https://www.rcsb.org/stats/summary
+What is in the PDB database anyway? Summary data grabbed from: https://www.rcsb.org/stats/summary
 
 ```{r}
 pdbstats <- read.csv("PDB_stats_summaryfile.csv", row.names = 1)
@@ -21,12 +19,13 @@ x
 ```{r}
 #as.numeric(x): Warning: NAs introduced by coercion[1]  NA  NA  NA  NA 213  22
 ```
+
 ```{r}
 gsub(',', '', x)
 ```
 
-doesn't like the commas, ask google. can also use "claude" 
-use gsub to replace commas with nothings
+doesn't like the commas, ask google. can also use "claude" use gsub to replace commas with nothings
+
 ```{r}
 convertednocomma <- function(x){
   #remove comma
@@ -47,6 +46,7 @@ n.tot
 ```
 
 The `apply()` function is very useful as it can take any function and "Apply" it over either the ROWS or COLs of a data.frame.
+
 ```{r}
 colSums(apply(pdbstats, 2, convertednocomma))/n.tot
 
@@ -71,7 +71,8 @@ empercent <- ((n.em/n.tot)*100)
 xraypercent
 empercent
 ```
->83.26% (xray%), 10.23% (EM%)
+
+> 83.26% (xray%), 10.23% (EM%)
 
 Q2. What proportion of structures in the PDB are protein?
 
@@ -80,19 +81,20 @@ n.totalprots <- 195866/n.tot
 
 n.totalprots
 ```
+
 > 86.4%
 
 Q3: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
 
 > 4,640
 
-## Using Mol*
+## Using Mol\*
 
 ![My first image from Mol-star :D](1HSG.png)
 
 Q4: Water molecules normally have 3 atoms. Why do we see just one atom per water molecule in this structure?
 
->Cannot see Hydrogen at this resolution, the only atom being displayed here is oxygen. 
+> Cannot see Hydrogen at this resolution, the only atom being displayed here is oxygen.
 
 Q5: There is a critical “conserved” water molecule in the binding site. Can you identify this water molecule? What residue number does this water molecule have
 
@@ -100,7 +102,7 @@ Q5: There is a critical “conserved” water molecule in the binding site. Can 
 
 Q6: Generate and save a figure clearly showing the two distinct chains of HIV-protease along with the ligand. You might also consider showing the catalytic residues ASP 25 in each chain and the critical water (we recommend “Ball & Stick” for these side-chains). Add this figure to your Quarto document.
 
->![with Aspartate residues and H2O mol](1HSG_withwater.png)
+> ![with Aspartate residues and H2O mol](1HSG_withwater.png)
 
 ## Use the Bio3D package for structural Bioinformatics
 
@@ -114,6 +116,7 @@ pdb
 ```{r}
 attributes(pdb)
 ```
+
 ```{r}
 head(pdb$atom)
 ```
@@ -121,10 +124,13 @@ head(pdb$atom)
 ```{r}
 pdbseq(pdb)[25]
 ```
+
 Q7. How many amino acids are there in this structure?
+
 ```{r}
 length(pdbseq(pdb))
 ```
+
 > There are 198 amino acids in this structure
 
 Q8. Name one of the two non-protein residues?
@@ -148,8 +154,6 @@ library(shiny)
 view.pdb(pdb)
 ```
 
-
-
 ```{r}
 modes <- nma(adk)
 plot(modes)
@@ -161,20 +165,17 @@ mktrj(modes, pdb=adk, file='adk.pdb') #give it the pdb= thing to have proper seq
 mktrj(modes, file="adk_m7.pdb")
 ```
 
-
 Q10. Which of the packages above is found only on BioConductor and not CRAN?
 
 > biocmanager
 
 Q.11 Which of the above packages is not found on BioConductor or CRAN?
 
-> bio3d 
+> bio3d
 
 Q.12 True or False? Functions from the devtools package can be used to install packages from GitHub and BitBucket?
 
 > True
-
-
 
 ```{r}
 library(bio3d)
@@ -186,23 +187,27 @@ Q13. How many amino acids are in this sequence, i.e. how long is this sequence?
 
 > There are 214 AAs
 
-##Blast or hmmer search 
+##Blast or hmmer search
+
 ```{r}
 b <- blast.pdb(aa)
 ```
 
 ##Plot a summary of search results:
+
 ```{r}
 hits <- plot(b)
 ```
 
 ##List some "Top Hits" and download their .pdb files:
+
 ```{r}
 head(hits$pdb.id)
 files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
 ```
 
 ##Align and Superimpose structures:
+
 ```{r}
 pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
 ```
@@ -217,6 +222,7 @@ ids <- basename.pdb(pdbs$id)
 ![pdbs plot](plot.png)
 
 ##Annotate PDB Structures
+
 ```{r}
 anno <- pdb.annotate(ids)
 unique(anno$source)
@@ -227,11 +233,14 @@ anno
 ```
 
 ##Perform PCA
+
 ```{r}
 pc.xray <- pca(pdbs)
 plot(pc.xray)
 ```
+
 ##Calculate RMSD and show structure-based clustering
+
 ```{r}
 rd <- rmsd(pdbs)
 
@@ -241,4 +250,3 @@ grps.rd <- cutree(hc.rd, k=3)
 
 plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
 ```
-

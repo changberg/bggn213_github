@@ -1,14 +1,12 @@
 ---
 title: "RNA Seq Mini Proj Class14"
 author: "Janie Chang-Weinberg (A69037446)"
-format: pdf
+format: gfm
 ---
 
 ## Import Data
 
-We need two things:
-Counts
-MetaData (what DESeq calls colData- as it describes the columns in Counts)
+We need two things: Counts MetaData (what DESeq calls colData- as it describes the columns in Counts)
 
 ```{r}
 counts <- read.csv("GSE37704_featurecounts.csv", row.names=1)
@@ -16,9 +14,11 @@ metadata <- read.csv("GSE37704_metadata.csv")
 ```
 
 Start with a sneak peak:
+
 ```{r}
 head(counts)
 ```
+
 ```{r}
 head(metadata)
 ```
@@ -32,30 +32,32 @@ colnames(counts)
 ```{r}
 metadata$id
 ```
+
 Since `counts` and `metadata` columns do not match, we must remove the `length` column from the `counts` dataset
 
 ```{r}
 countData <- counts[,-1]
 head(countData)
 ```
+
 ```{r}
 all(colnames(countData) == metadata$id)
 
 ```
+
 yay now they match.
 
-
 ## Data CleanUp
+
 ### Must filter out zero counts
 
-It is standard practice to remove any genes/transcripts that we have no data for, ie. zero counts in all columns 
+It is standard practice to remove any genes/transcripts that we have no data for, ie. zero counts in all columns
 
 ```{r}
 to.keep.inds <- rowSums(countData) > 0 
 cleanCounts <- countData[to.keep.inds,]
 head(cleanCounts)
 ```
-
 
 ## Setup for DESeq
 
@@ -78,20 +80,17 @@ dds <- DESeq(dds)
 res <- results(dds)
 ```
 
-
 ## Inspect Results
 
 ```{r}
 head(res)
 ```
 
-
 ## Data Viz
 
 ```{r}
 plot(res$log2FoldChange, -log(res$padj))
 ```
-
 
 ## Pathway Analysis
 
@@ -104,7 +103,6 @@ For this I will use the AnnotationDbi package and its `mapIds()` function
 Need to know what format stuff is currently in, and what we would like to "translate" them into.
 
 We currently have Ensembl IDs, but to use KEGG, we need to use Entrez IDs.
-
 
 ```{r}
 library(AnnotationDbi)
@@ -152,7 +150,7 @@ top.inds <- (abs(res$log2FoldChange) > 2) & (res$padj <= 0.05)
 top.inds[is.na(top.inds)] <- FALSE
 ```
 
-Let's save our "top genes" to a .csv file! 
+Let's save our "top genes" to a .csv file!
 
 ```{r}
 top.genes <- res[top.inds,]
@@ -160,7 +158,6 @@ write.csv(top.genes, file="top_geneset.csv")
 ```
 
 Now we can do some pathway analysis (finally!)
-
 
 ```{r}
 library(gage)
@@ -217,6 +214,7 @@ head(gores$less)
 sig_genes <- res[res$padj <= 0.05 & !is.na(res$padj), "symbol"]
 print(paste("Total number of significant genes:", length(sig_genes)))
 ```
+
 ```{r}
 head(sig_genes)
 ```
@@ -231,4 +229,3 @@ write.table(sig_genes,
 ```
 
 ![Overview](R-HSA-68886-2.png)
-
